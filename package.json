@@ -1,0 +1,23 @@
+{
+  "name": "cheatsheets",
+  "version": "0.0.1",
+  "description": "A collection of snippets for various things.",
+  "main": "index.js",
+  "bin": {
+    "cheat" : "bin/cheat.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/briancsparks/cheatsheets.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/briancsparks/cheatsheets/issues"
+  },
+  "homepage": "https://github.com/briancsparks/cheatsheets#readme"
+}
