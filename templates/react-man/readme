@@ -1,3 +1,31 @@
 
-aklsdfjaljf
+# ----- React JS -----
+# Install create-react-app, if you have not already done so
+npm install -g create-react-app
+
+# Generate skeleton
+create-react-app that
+cd that
+
+# After running create-react-app, you will have a skeleton app. You must turn it into a git repo.
+git init
+git add .
+git commit -am "First Post"
+
+# Now, cheat
+cd src
+cheat --it=react
+
+# The components and containers are just named Component.js and Container.js -- rename them to good names
+mv components/Component.js components/YourNameHereComponent.js
+mv containers/Container.js containers/YourNameHereContainer.js
+
+# Then fix the code
+ag That
+
+# edit IndexComponent.js components/YourNameHereComponent.js containers/YourNameHereContainer.js and search for 'That'
+
+# ----- React Native -----
+
+TBD
 

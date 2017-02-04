@@ -1,14 +1,15 @@
 
 import React                            from 'react';
-import { Grid, Navbar }                 from 'react-bootstrap';
+import ReactDOM                         from 'react-dom';
 import { Provider }                     from 'react-redux';
+import './index.css';
 
 import configureStore                   from './configureStore';
 import IndexComponent                   from './containers/IndexComponent';
 
 var store     = configureStore();
 
-export default class App extends Component {
+class App extends Component {
   render() {
     return (
       <Provider store={store} >
@@ -18,4 +19,9 @@ export default class App extends Component {
   }
 }
 
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
 

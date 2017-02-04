@@ -40,17 +40,21 @@ var mkAndCpTemplDir = function(templName, srcRelDir, destRelDir) {
   mkdir('-p', destDir);
 
   _.each(ls(srcDir), function(file) {
-    cp(path.join(srcDir, file), destDir);
+    cp('-f', path.join(srcDir, file), destDir);
   });
 };
 
 fns.react = function() {
   //console.log(ls(path.join(templatesDir, 'react', 'actions')));
+
+  console.log("BEGIN--The following 'is a directory...' messages are ok.");
+  mkAndCpTemplDir('react', '.',           '.');
+  console.log("END--The following 'is a directory...' messages are ok.");
+
   mkAndCpTemplDir('react', 'actions',     'actions');
   mkAndCpTemplDir('react', 'components',  'components');
   mkAndCpTemplDir('react', 'containers',  'containers');
   mkAndCpTemplDir('react', 'reducers',    'reducers');
-  mkAndCpTemplDir('react', '.',           '.');
 };
 
 mans.react = function() {
