@@ -25,6 +25,10 @@ ag That
 
 # edit IndexComponent.js components/YourNameHereComponent.js containers/YourNameHereContainer.js and search for 'That'
 
+# Once everything is OK, run:
+cd ..
+npm start
+
 # ----- React Native -----
 
 TBD
