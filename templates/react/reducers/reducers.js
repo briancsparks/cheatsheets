@@ -24,3 +24,9 @@ function nouns(state = {}, action) {
   }
 }
 
+const rootReducer = combineReducers({
+  nouns
+});
+
+export default rootReducer;
+

@@ -12,6 +12,9 @@ git init
 git add .
 git commit -am "First Post"
 
+# Install the dependencies
+yarn add redux react-redux redux-thunk redux-logger underscore
+
 # Now, cheat
 cd src
 cheat --it=react

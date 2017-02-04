@@ -4,12 +4,12 @@ import ReactDOM                         from 'react-dom';
 import { Provider }                     from 'react-redux';
 import './index.css';
 
-import configureStore                   from './configureStore';
-import IndexComponent                   from './containers/IndexComponent';
+import configureStore                   from './reducers/configureStore';
+import IndexComponent                   from './containers/Container';
 
 var store     = configureStore();
 
-class App extends Component {
+class App extends React.Component {
   render() {
     return (
       <Provider store={store} >

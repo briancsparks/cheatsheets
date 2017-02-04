@@ -1,8 +1,8 @@
 
 //import _                                from 'underscore';
-import React, { Component }             from 'react';
+//import React, { Component }             from 'react';
 import { connect }                      from 'react-redux';
-import ThatComponent                    from '../components/ThatComponent.js';
+import ThatComponent                    from '../components/Component.js';
 
 
 const mapStateToProps = (state) => {

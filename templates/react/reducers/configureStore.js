@@ -23,8 +23,8 @@ export default function configureStore(preloadedState = {}) {
   if (module.hot) {
     console.log("configureStore.js re-loading");
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('./reducers/reducers', () => {
-      const nextRootReducer = require('./reducers/reducers');
+    module.hot.accept('./reducers', () => {
+      const nextRootReducer = require('./reducers');
       store.replaceReducer(nextRootReducer);
     });
   }
