@@ -70,7 +70,7 @@ fns.sg = function(argv) {
   const destDir   = directory(startDir, '.');
   const filename  = sg.argvGet(argv, 'filename,file,f');
 
-  if (!filename)  { return sg.die('Need --filename='); }
+  if (!filename)  { return sg.die('Need --filename= (the new sg-skeleton file will be ./filename.js)'); }
 
   mkdir('-p', destDir());
   cpAndMatchExt(srcDir('_file.js'), destDir(filename));
