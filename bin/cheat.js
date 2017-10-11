@@ -69,7 +69,7 @@ fns.man = function(argv) {
 _.each(ls(templates()), tDir => {
   if (test('-d', templates(tDir))) {
     fns[tDir] = function(argv) {
-      const filename  = sg.argvGet(argv, 'filename,file,f');
+      const filename  = sg.argvGet(argv, 'filename,file,f') || ARGV.args.shift();
       const srcDir    = directory(templates(tDir));
       const destDir   = directory(startDir, '.')(path.dirname(filename));
       const destFile  = directory(startDir, '.')(filename);
