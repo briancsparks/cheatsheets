@@ -2,6 +2,8 @@
 /**
  *  foo blah blah blah.
  *
+ *  This file is just the Node.js server.
+ *
  */
 const sg                      = require('sgsg');
 const _                       = sg._;
