@@ -10,13 +10,11 @@ const path                    = require('path');
 
 const setOnn                  = sg.setOnn;
 const deref                   = sg.deref;
-const extractClientId         = serverassist.extractClientId;
 const myColor                 = serverassist.myColor();
 const myStack                 = serverassist.myStack();
 const registerAsService       = serverassist.registerAsService;
 const registerAsServiceApp    = serverassist.registerAsServiceApp;
 const configuration           = serverassist.configuration;
-const shortenKey              = serverassist.shortenKey;
 
 const appName                 = 'foo';
 const projectId               = 'sa';
