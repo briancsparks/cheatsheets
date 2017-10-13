@@ -15,6 +15,10 @@ const myStack                 = serverassist.myStack();
 const registerAsService       = serverassist.registerAsService;
 const registerAsServiceApp    = serverassist.registerAsServiceApp;
 const configuration           = serverassist.configuration;
+const _200                    = serverassist._200;
+const _400                    = serverassist._400;
+const _404                    = serverassist._404;
+const _500                    = serverassist._500;
 
 const appName                 = 'foo';
 const projectId               = 'sa';
@@ -50,9 +54,9 @@ lib.addRoutes = function(addRoute, onStart, db /*, addRawRoute, callback */) {
    */
   const xyz = function(req, res, params, splats, query) {
     var   result     = {};
-    const body       = serverassist.normalizeBody(req.bodyJson || {}, params || {}, query || {});
+    const args       = serverassist.normalizeBody(req.bodyJson || {}, params || {}, query || {});
 
-    if (!body.sessionId) {
+    if (!args.sessionId) {
       return serverassist._400(req, res, {ok:false}, `Must provide sessionId`);
     }
 
@@ -61,10 +65,10 @@ lib.addRoutes = function(addRoute, onStart, db /*, addRawRoute, callback */) {
       return next();
 
     }], function last(err, result) {
-      serverassist._200(req, res, result);
+      _200(req, res, result);
     }, function abort(err, msg) {
-      if (msg)  { return sg.die(err, callback, msg); }
-      return callback(err);
+      if (msg)  { return _404(req, res, msg); }
+      return _400(err);
     });
 
   };
