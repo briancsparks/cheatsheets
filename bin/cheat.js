@@ -41,7 +41,7 @@ var main = function() {
       return sg.die("Cheat: unknown man entry: "+ARGV.man);
     }
   } else {
-    return sg.die("Usage: cheat --it=name");
+    return sg.die(`Usage: cheat [${_.keys(fns)}]`);
   }
 
 };
@@ -102,7 +102,7 @@ mans.react = function() {
   console.log(cat(readme));
 };
 
-fns.react_native = function() {
+fns['react-native'] = function() {
   cpRTemplDir('react', '.');
   cpRTemplDir('react-native', '.');
 };
