@@ -41,7 +41,7 @@ var main = function() {
       return sg.die("Cheat: unknown man entry: "+ARGV.man);
     }
   } else {
-    return sg.die(`Usage: cheat [${_.keys(fns)}]`);
+    return sg.die(`Usage: cheat [${_.keys(fns)}] --filename=<rel-path>`);
   }
 
 };
