@@ -5,6 +5,7 @@ var _               = sg._;
 var ARGV            = sg.ARGV();
 var sh              = sg.extlibs.shelljs;
 var path            = require('path');
+var fs              = require('fs');
 
 sg.requireShellJsGlobal();
 
@@ -21,10 +22,15 @@ var main = function() {
     sh.config.verbose = true;
   }
 
-  const it      = ARGV.it   || ARGV.args.shift();
+  var   origIt  = ARGV.it   || ARGV.args.shift();
+  var   it      = origIt;
+
+  if (it.startsWith('t-')) {
+    it = it.substr(2);
+  }
 
   if (it && fns[it]) {
-    return fns[it](ARGV);
+    return fns[it](ARGV, origIt);
 
   } else if (it) {
     if (it === 'react')              { return fns.react(); }
@@ -57,6 +63,28 @@ const cpAndMatchExt = function(src, dest_) {
   return cp(src, dest);
 };
 
+const cpAndMatchExt2 = function(src, dest_, argv) {
+  var   dest    = dest_;
+  const srcExt  = path.extname(src);
+
+  if (path.extname(dest) !== srcExt) {
+    dest += srcExt;
+  }
+
+  var stats     = fs.lstatSync(src);
+  var mode      = +('0o'+stats.mode.toString(8).split("").reverse().join("").substr(0,3).split("").reverse().join(""));
+
+  var contents  = ""+fs.readFileSync(src);
+  _.each('foo,bar,baz,qux'.split(','), function(word) {
+    if (argv[word]) {
+      contents = contents.replace(new RegExp(word, 'gi'), argv[word]);
+    }
+  });
+
+  fs.writeFileSync(dest, contents);
+  fs.chmodSync(dest, mode);
+};
+
 fns.man = function(argv) {
   const entry     = argv.args.shift();
 
@@ -68,7 +96,7 @@ fns.man = function(argv) {
 
 _.each(ls(templates()), tDir => {
   if (test('-d', templates(tDir))) {
-    fns[tDir] = function(argv) {
+    fns[tDir] = function(argv, it) {
       const filename  = sg.argvGet(argv, 'filename,file,f') || ARGV.args.shift();
       const srcDir    = directory(templates(tDir));
       const destDir   = directory(startDir, '.')(path.dirname(filename));
@@ -76,11 +104,26 @@ _.each(ls(templates()), tDir => {
 
       if (!filename)  { return sg.die('Need --filename= (the new sg-skeleton file will be ./filename.js)'); }
 
-      console.log(filename, destDir);
+      //console.log(filename, destDir);
 
       mkdir('-p', destDir);
-      cpAndMatchExt(srcDir('_file.js'), destFile);
-      console.log(srcDir('_file.js'), destFile);
+
+      _.each(',.js,.cpp,.c,.java,.css,.less'.split(','), function(langExt) {
+
+        const name = srcDir('_file'+langExt);
+        if (!test('-f', name)) {
+          return;
+         }
+        //console.log(name, destFile);
+
+        if (it && it.startsWith('t-')) {
+          //console.log('using ', it);
+          cpAndMatchExt2(name, destFile, argv);
+        } else {
+          //console.log('using ', it);
+          cpAndMatchExt(name, destFile);
+        }
+      });
     }
   }
 });

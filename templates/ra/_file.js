@@ -14,11 +14,11 @@ lib.foo = function() {
   var   u               = sg.prepUsage();
 
   return raLib.adapt(arguments, (argv, context, callback) => {
-    const bar           = ra.wrap(lib.bar);
+    const baz           = ra.wrap(lib.baz);
 
-    const xyz           = argvGet(argv, u('xyz',  '=abc', 'The xyzabc.'));
+    const bar           = argvGet(argv, u('bar',  '=bar', 'The bar.'));
 
-    if (!xyz)           { return u.sage('xyz', 'Need XYZ.', callback); }
+    if (!bar)           { return u.sage('bar', 'Need bar.', callback); }
 
     return sg.__run2({}, callback, [function(result, next, last, abort) {
 
@@ -29,6 +29,10 @@ lib.foo = function() {
       return callback(err);
     });
   });
+};
+
+lib.baz = function(argv, context, callback) {
+  return callback();
 };
 
 _.each(lib, (value, key) => {
