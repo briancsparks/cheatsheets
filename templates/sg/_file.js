@@ -12,8 +12,15 @@ const deref                   = sg.deref;
 
 var lib = {};
 
+
 lib.myFavoriteFunction = function() {
+
+  return sg.__run([function(next) {
+  }, function(next) {
+  }], function() {
+  });
 };
+
 
 
 _.each(lib, (value, key) => {
