@@ -17,7 +17,7 @@ var lib = {};
 lib.foo = function() {
   var   u               = sg.prepUsage();
 
-  return raLib.adapt(arguments, (argv, context, callback) => {
+  var ra = raLib.adapt(arguments, (argv, callback) => {
     const baz           = ra.wrap(lib.baz);
 
     const bar           = argvGet(argv, u('bar',  '=bar', 'The bar.'));
@@ -25,7 +25,9 @@ lib.foo = function() {
     if (!bar)           { return u.sage('bar', 'Need bar.', callback); }
 
     return sg.__run2({}, callback, [function(result, next, last, abort) {
+      return next();
 
+    }, function(result, next, last, abort) {
       return next();
 
     }], function abort(err, msg) {

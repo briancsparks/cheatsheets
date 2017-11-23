@@ -60,8 +60,10 @@ lib.addRoutes = function(addRoute, onStart, db /*, addRawRoute, callback */) {
       return serverassist._400(req, res, {ok:false}, `Must provide sessionId`);
     }
 
-    return sg.__run2({}, callback, [function(result, next, last, abort) {
+    return sg.__run2({}, [function(result, next, last, abort) {
+      return next();
 
+    }, function(result, next last, abort) {
       return next();
 
     }], function last(err, result) {
