@@ -10,11 +10,16 @@ var fs              = require('fs');
 sg.requireShellJsGlobal();
 
 var   templatesDir    = path.join(sg.argvGet(ARGV, 'templ-dir,template,templ,t') || __dirname, '..', 'templates');
+var   snipsDir        = path.join(__dirname, '..', 'snips');
 var   startDir        = process.cwd();
 const templates       = directory(templatesDir);
 
 var   fns   = {};
 var   mans  = {};
+
+const showUsage = function() {
+  return sg.die(`Usage: cheat [${_.keys(fns)}] --filename=<rel-path>`);
+};
 
 var main = function() {
 
@@ -24,6 +29,10 @@ var main = function() {
 
   var   origIt  = ARGV.it   || ARGV.args.shift();
   var   it      = origIt;
+
+  if (!it) {
+    return showUsage();
+  }
 
   if (it.startsWith('t-')) {
     it = it.substr(2);
@@ -47,7 +56,7 @@ var main = function() {
       return sg.die("Cheat: unknown man entry: "+ARGV.man);
     }
   } else {
-    return sg.die(`Usage: cheat [${_.keys(fns)}] --filename=<rel-path>`);
+    return showUsage();
   }
 
 };
@@ -150,7 +159,41 @@ fns['react-native'] = function() {
   cpRTemplDir('react-native', '.');
 };
 
+fns.__run2 = function(ARGV, it) {
+  process.stdout.write(cat_([snipsDir, '__run2.js'], ARGV.args.shift()));
+};
+
+fns.__run = function(ARGV, it) {
+  process.stdout.write(cat_([snipsDir, '__run.js'], ARGV.args.shift()));
+};
+
 main();
+
+function cat_(filename, padSize) {
+  if (_.isArray(filename)) {
+    return cat_(path.join.apply(path, filename), padSize);
+  }
+
+  if (arguments.length === 1) { return cat(filename); }
+  return indent(cat(filename), padSize);
+}
+
+function indent(str, num) {
+  var padding = [ '',' ','  ',
+    '   ',
+    '    ',
+    '     ',
+    '      ',
+    '       ',
+    '        ',
+  ];
+
+  return str.split('\n').map(function(line) {
+    if (line.length === 0) { return ''; }
+
+    return padding[num]+line;
+  }).join('\n');
+}
 
 function directory(root_ /*, root2, ...*/) {
   var root;
