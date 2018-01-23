@@ -10,9 +10,10 @@ var fs              = require('fs');
 sg.requireShellJsGlobal();
 
 var   templatesDir    = path.join(sg.argvGet(ARGV, 'templ-dir,template,templ,t') || __dirname, '..', 'templates');
-var   snipsDir        = path.join(__dirname, '..', 'snips');
+var   snipsDir        = path.join(sg.argvGet(ARGV, 'snips-dir,snips,s') || __dirname, '..', 'snips');
 var   startDir        = process.cwd();
 const templates       = directory(templatesDir);
+const snips           = directory(snipsDir);
 
 var   fns   = {};
 var   mans  = {};
@@ -159,16 +160,23 @@ fns['react-native'] = function() {
   cpRTemplDir('react-native', '.');
 };
 
-fns.__run2 = function(ARGV, it) {
-  process.stdout.write(cat_([snipsDir, '__run2.js'], ARGV.args.shift()));
-};
+_.each(ls(snipsDir), snipName => {
+  if (test('-f', snips(snipName))) {
+    fns[path.basename(snips(snipName), '.js')] = function(argv, it) {
+      const indent = ((ARGV.args.length > 0) && ARGV.args.shift()) || 2;
 
-fns.__run = function(ARGV, it) {
-  process.stdout.write(cat_([snipsDir, '__run.js'], ARGV.args.shift()));
-};
+      process.stdout.write(cat_([snipsDir, snipName], indent));
+    };
+  }
+});
 
 main();
 
+/**
+ *  cats a file, indenting each line by padSize.
+ *
+ *  filename can be an array that will be joind.
+ */
 function cat_(filename, padSize) {
   if (_.isArray(filename)) {
     return cat_(path.join.apply(path, filename), padSize);
