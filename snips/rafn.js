@@ -1,22 +1,23 @@
-lib.foo = function() {
+lib.fn = function() {
   var   u               = sg.prepUsage();
 
   var ra = raLib.adapt(arguments, (argv, context, callback) => {
-    const baz           = ra.wrap(lib.baz);
 
-    const bar           = argvGet(argv, u('bar',  '=bar', 'The bar.'));
+    const foo           = argvGet(argv, u('foo',  '=foo', 'The foo.'));
+    if (!foo)           { return u.sage('foo', 'Need foo.', callback); }
 
-    if (!bar)           { return u.sage('bar', 'Need bar.', callback); }
+    return sg.iwrap('fn', callback, function(eabort) {
 
-    return sg.__run2({}, callback, [function(result, next, last, abort) {
-      return next();
+      return sg.__run3([function(next, enext, enag, ewarn) {
+        return next();
 
-    }, function(result, next, last, abort) {
-      return next();
+      }, function(next, enext, enag, ewarn) {
+        return next();
 
-    }], function abort(err, msg) {
-      if (msg)  { return sg.die(err, callback, msg); }
-      return callback(err);
+      }], function() {
+
+        return callback(err, result);
+      });
     });
   });
 };

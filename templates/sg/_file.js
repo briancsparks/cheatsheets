@@ -13,18 +13,27 @@ const deref                   = sg.deref;
 
 var lib = {};
 
-const main = function() {
+const main = function(callback) {
 
-  return sg.__run2({}, callback, [function(result, next, last, abort) {
-    return next();
+  var result = {};
+  return sg.iwrap('fn', callback, abort, function(eabort) {
 
-  }, function(result, next, last, abort) {
-    return next();
+    return sg.__run3([function(next, enext, enag, ewarn) {
+      return next();
 
-  }], function abort(err, msg) {
-    return callback();
+    }, function(next, enext, enag, ewarn) {
+      return next();
 
+    }], function() {
+
+      return callback(null, result);
+    });
   });
+
+  function abort(err, msg) {
+    console.error(msg, err);
+    return callback(err);
+  }
 };
 
 
@@ -41,6 +50,9 @@ _.each(lib, (value, key) => {
 });
 
 if (sg.callMain(ARGV, __filename)) {
-  main();
+  return main(function(err, result) {
+    if (err)      { console.error(err); return process.exit(2); }
+    if (result)   { console.log(result); }
+  });
 }
 
