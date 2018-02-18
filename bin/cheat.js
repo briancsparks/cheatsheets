@@ -165,7 +165,12 @@ _.each(ls(snipsDir), snipName => {
     fns[path.basename(snips(snipName), '.js')] = function(argv, it) {
       const indent = ((ARGV.args.length > 0) && ARGV.args.shift()) || 2;
 
-      process.stdout.write(cat_([snipsDir, snipName], indent));
+      var snip = cat_([snipsDir, snipName], indent);
+      snip = sg.reduce(ARGV.flags, snip, function(m, value, key) {
+        return (m = m.replace(new RegExp(key, 'gi'), value));
+      });
+
+      process.stdout.write(snip);
     };
   }
 });
