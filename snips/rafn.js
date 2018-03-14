@@ -1,14 +1,14 @@
-lib.fn = function() {
+lib.foo = function() {
   var   u               = sg.prepUsage();
 
   var ra = raLib.adapt(arguments, (argv, context, callback) => {
 
-    const foo           = argvGet(argv, u('foo',  '=foo', 'The foo.'));
-    if (!foo)           { return u.sage('foo', 'Need foo.', callback); }
+    const bar           = argvGet(argv, u('bar',  '=bar', 'The bar.'));
+    if (!bar)           { return u.sage('bar', 'Need bar.', callback); }
 
     var   result        = {};
 
-    return sg.iwrap('fn', callback, function(eabort) {
+    return sg.iwrap('foo', callback, function(eabort) {
 
       return sg.__run3([function(next, enext, enag, ewarn) {
         return next();
