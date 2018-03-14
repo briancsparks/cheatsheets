@@ -6,6 +6,8 @@ lib.fn = function() {
     const foo           = argvGet(argv, u('foo',  '=foo', 'The foo.'));
     if (!foo)           { return u.sage('foo', 'Need foo.', callback); }
 
+    var   result        = {};
+
     return sg.iwrap('fn', callback, function(eabort) {
 
       return sg.__run3([function(next, enext, enag, ewarn) {
