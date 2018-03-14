@@ -14,6 +14,7 @@ var   snipsDir        = path.join(sg.argvGet(ARGV, 'snips-dir,snips,s') || __dir
 var   startDir        = process.cwd();
 const templates       = directory(templatesDir);
 const snips           = directory(snipsDir);
+const metaWords       = 'foo,bar,baz,quxx';
 
 var   fns   = {};
 var   mans  = {};
@@ -22,26 +23,30 @@ const showUsage = function() {
   return sg.die(`Usage: cheat [${_.keys(fns)}] --filename=<rel-path>`);
 };
 
+/**
+ *  Parses args and invokes.
+ *
+ *  cheat templ_or_snip __filename__ __foo__ __baz__ __quxx__ --foo=foo --bar=bar --baz=baz --quxx=quxx
+ */
 var main = function() {
 
   if (ARGV.v || ARGV.verbose) {
     sh.config.verbose = true;
   }
 
-  var   origIt  = ARGV.it   || ARGV.args.shift();
-  var   it      = origIt;
+  // `it` is the template or snip name (from the dir or filename)
+  var   it  = ARGV.it   || ARGV.args.shift();
 
+  // Need a template
   if (!it) {
     return showUsage();
   }
 
-  if (it.startsWith('t-')) {
-    it = it.substr(2);
-  }
-
+  // Does the template match the name of a template/name or snips/name
   if (it && fns[it]) {
-    return fns[it](ARGV, origIt);
+    return fns[it](ARGV, it);
 
+  // Does it match one of the hard-coded templates?
   } else if (it) {
     if (it === 'react')              { return fns.react(); }
     else if (it === 'react-native')  { return fns.react_native(); }
@@ -51,6 +56,7 @@ var main = function() {
       return sg.die("Cheat: unknown command: "+it);
     }
 
+  // Does it match a man entry?
   } else if (ARGV.man) {
     if (ARGV.man === 'react')             { return mans.react(); }
     else {
@@ -62,17 +68,20 @@ var main = function() {
 
 };
 
-const cpAndMatchExt = function(src, dest_) {
-  var   dest    = dest_;
-  const srcExt  = path.extname(src);
+//const cpAndMatchExt = function(src, dest_) {
+//  var   dest    = dest_;
+//  const srcExt  = path.extname(src);
+//
+//  if (path.extname(dest) !== srcExt) {
+//    dest += srcExt;
+//  }
+//
+//  return cp(src, dest);
+//};
 
-  if (path.extname(dest) !== srcExt) {
-    dest += srcExt;
-  }
-
-  return cp(src, dest);
-};
-
+/**
+ *  Copies template file and matches the mode of the file and the extension (so the user does not need to specify ext.)
+ */
 const cpAndMatchExt2 = function(src, dest_, argv) {
   var   dest    = dest_;
   const srcExt  = path.extname(src);
@@ -85,7 +94,7 @@ const cpAndMatchExt2 = function(src, dest_, argv) {
   var mode      = +('0o'+stats.mode.toString(8).split("").reverse().join("").substr(0,3).split("").reverse().join(""));
 
   var contents  = ""+fs.readFileSync(src);
-  _.each('foo,bar,baz,qux'.split(','), function(word) {
+  _.each(metaWords.split(','), function(word) {
     if (argv[word]) {
       contents = contents.replace(new RegExp(word, 'gi'), argv[word]);
     }
@@ -95,6 +104,9 @@ const cpAndMatchExt2 = function(src, dest_, argv) {
   fs.chmodSync(dest, mode);
 };
 
+/**
+ *  Does a man page.
+ */
 fns.man = function(argv) {
   const entry     = argv.args.shift();
 
@@ -104,6 +116,7 @@ fns.man = function(argv) {
   }
 };
 
+// Load up all the template dirs, and make functions out of them
 _.each(ls(templates()), tDir => {
   if (test('-d', templates(tDir))) {
     fns[tDir] = function(argv, it) {
@@ -113,6 +126,8 @@ _.each(ls(templates()), tDir => {
       const destFile  = directory(startDir, '.')(filename);
 
       if (!filename)  { return sg.die('Need --filename= (the new sg-skeleton file will be ./filename.js)'); }
+
+      parsePositionalArgs();
 
       //console.log(filename, destDir);
 
@@ -124,15 +139,8 @@ _.each(ls(templates()), tDir => {
         if (!test('-f', name)) {
           return;
          }
-        //console.log(name, destFile);
 
-        if (it && it.startsWith('t-')) {
-          //console.log('using ', it);
-          cpAndMatchExt2(name, destFile, argv);
-        } else {
-          //console.log('using ', it);
-          cpAndMatchExt(name, destFile);
-        }
+        cpAndMatchExt2(name, destFile, argv);
       });
     }
   }
@@ -160,10 +168,14 @@ fns['react-native'] = function() {
   cpRTemplDir('react-native', '.');
 };
 
+
+// Load a snip, do the replacement and send to stdout
 _.each(ls(snipsDir), snipName => {
   if (test('-f', snips(snipName))) {
     fns[path.basename(snips(snipName), '.js')] = function(argv, it) {
-      const indent = ((ARGV.args.length > 0) && ARGV.args.shift()) || 2;
+      const indent = ((ARGV.args.length > 0) && argIsNumber(ARGV.args[0]) && ARGV.args.shift()) || 2;
+
+      parsePositionalArgs();
 
       var snip = cat_([snipsDir, snipName], indent);
       snip = sg.reduce(ARGV.flags, snip, function(m, value, key) {
@@ -208,6 +220,9 @@ function indent(str, num) {
   }).join('\n');
 }
 
+/**
+ *  Makes a function that will make a directory name.
+ */
 function directory(root_ /*, root2, ...*/) {
   var root;
 
@@ -221,4 +236,22 @@ function directory(root_ /*, root2, ...*/) {
     return path.join(...pathArgs);
   };
 };
+
+/**
+ *  Turns the remaining positional args into --foo=one style
+ */
+function parsePositionalArgs() {
+  _.each(metaWords.split(','), function(word) {
+    if (ARGV.args.length > 0 && !ARGV[word]) {
+      ARGV.setFlag(word, ARGV.args.shift());
+    }
+  });
+}
+
+/**
+ *  Returns if the arg (a string) would be parsed as a number.
+ */
+function argIsNumber(arg) {
+  return /^[0-9]+/.exec(arg);
+}
 

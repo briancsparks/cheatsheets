@@ -1,6 +1,6 @@
 {
   "name": "cheatsheets",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A collection of snippets for various things.",
   "main": "index.js",
   "bin": {
