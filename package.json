@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/briancsparks/cheatsheets#readme",
   "dependencies": {
-    "sgsg": "^0.9.32"
+    "sgsg": "^0.9.51"
   }
 }

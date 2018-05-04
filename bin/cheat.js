@@ -9,9 +9,11 @@ var fs              = require('fs');
 
 sg.requireShellJsGlobal();
 
+var   projectsDir     = path.join(sg.argvGet(ARGV, 'proj-dir,projects,p')        || __dirname, '..', 'projects');
 var   templatesDir    = path.join(sg.argvGet(ARGV, 'templ-dir,template,templ,t') || __dirname, '..', 'templates');
 var   snipsDir        = path.join(sg.argvGet(ARGV, 'snips-dir,snips,s') || __dirname, '..', 'snips');
 var   startDir        = process.cwd();
+const projects        = directory(projectsDir);
 const templates       = directory(templatesDir);
 const snips           = directory(snipsDir);
 const metaWords       = 'foo,bar,baz,quxx';
@@ -24,7 +26,7 @@ const showUsage = function() {
 };
 
 /**
- *  Parses args and invokes.
+ *  Parses args and generates a snippet or a file from a template.
  *
  *  cheat templ_or_snip __filename__ __foo__ __baz__ __quxx__ --foo=foo --bar=bar --baz=baz --quxx=quxx
  */
@@ -121,11 +123,11 @@ _.each(ls(templates()), tDir => {
   if (test('-d', templates(tDir))) {
     fns[tDir] = function(argv, it) {
       const filename  = sg.argvGet(argv, 'filename,file,f') || ARGV.args.shift();
+      if (!filename)  { return sg.die('Need --filename= (the new sg-skeleton file will be ./filename.js)'); }
+
       const srcDir    = directory(templates(tDir));
       const destDir   = directory(startDir, '.')(path.dirname(filename));
       const destFile  = directory(startDir, '.')(filename);
-
-      if (!filename)  { return sg.die('Need --filename= (the new sg-skeleton file will be ./filename.js)'); }
 
       parsePositionalArgs();
 
@@ -146,6 +148,34 @@ _.each(ls(templates()), tDir => {
   }
 });
 
+// Load all the project templates
+_.each(ls(projects()), pDir => {
+  if (!test('-d', projects(pDir)))    { return; }
+
+  const srcDir    = directory(projects(pDir));
+
+  fns[pDir] = function(argv, it) {
+    const dirname  = sg.argvGet(argv, 'dirname,file,f') || ARGV.args.shift();
+    if (!dirname)  { return sg.die('Need --dirname= (the new sg-skeleton file will be ./dirname)'); }
+
+    const destDir   = directory(startDir, '.', dirname);
+
+    parsePositionalArgs();
+
+    _.each(sh.ls('-R', srcDir('.')), name => {
+
+      if (test('-f', srcDir(name))) {
+        //console.error('file:', srcDir(name), destDir(name));
+        cpAndMatchExt2(srcDir(name), destDir(name), argv);
+      } else if (test('-d', srcDir(name))) {
+        //console.error('dir:', srcDir(name), destDir(name));
+        sh.mkdir('-p', destDir(name));
+      }
+    });
+
+  };
+});
+
 var cpRTemplDir = function(templName, destRelDir) {
   var src       = path.join(templatesDir, templName, '*');
   var destDir   = path.join(startDir, destRelDir, '');
@@ -154,16 +184,16 @@ var cpRTemplDir = function(templName, destRelDir) {
   cp('-Rf', src, destDir);
 };
 
-fns.react = function() {
+fns.reactz = function() {
   cpRTemplDir('react', '.');
 };
 
-mans.react = function() {
+mans.reactz = function() {
   var readme = path.join(templatesDir, 'react-man', 'readme');
   console.log(cat(readme));
 };
 
-fns['react-native'] = function() {
+fns['react-nativez'] = function() {
   cpRTemplDir('react', '.');
   cpRTemplDir('react-native', '.');
 };
