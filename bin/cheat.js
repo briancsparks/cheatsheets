@@ -135,7 +135,7 @@ _.each(ls(templates()), tDir => {
 
       mkdir('-p', destDir);
 
-      _.each(',.js,.cpp,.hpp,.h,.c,.java,.css,.less'.split(','), function(langExt) {
+      _.each(',.js,.jsx,.cpp,.hpp,.h,.c,.java,.css,.less'.split(','), function(langExt) {
 
         const name = srcDir('_file'+langExt);
         if (!test('-f', name)) {
