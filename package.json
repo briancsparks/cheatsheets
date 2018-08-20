@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/briancsparks/cheatsheets#readme",
   "dependencies": {
+    "gluegun": "^2.0.0-beta.11",
     "sgsg": "^0.9.51"
   }
 }

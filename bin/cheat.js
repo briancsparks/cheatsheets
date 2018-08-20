@@ -6,6 +6,7 @@ var ARGV            = sg.ARGV();
 var sh              = sg.extlibs.shelljs;
 var path            = require('path');
 var fs              = require('fs');
+var cheat2          = require('./cheat2');
 
 sg.requireShellJsGlobal();
 
@@ -217,7 +218,14 @@ _.each(ls(snipsDir), snipName => {
   }
 });
 
-main();
+if (ARGV.v1) {
+  main();
+} else {
+  cheat2.main(function(err, result) {
+    // if (err)      { console.error(err); return process.exit(2); }
+    // if (result)   { console.log(result); }
+  });
+}
 
 /**
  *  cats a file, indenting each line by padSize.
