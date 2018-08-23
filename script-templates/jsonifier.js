@@ -10,10 +10,14 @@ var   str;
 
 const fname     = './sg-reduce.js';
 const content   = fs.readFileSync(fname, 'utf8');
-// str             = content;
-// console.log(str);
-
 str             = content.split('\n').filter(line => line);
+
+var body        = dquote('body');
+
+console.log(kv('prefix', 'sgr', ','));
+
+console.log(`${body}: [`);
+
 
 var line;
 
@@ -26,20 +30,16 @@ for (var i = 0; i < len; ++i) {
   }
 }
 
-
-// const body      = content.split('\n').filter(function(line) { return line; });
-// str             = body;
-
-// console.log(JSON.stringify(str));
-
-module.exports = str;
-
-// lib.myFavoriteFunction = function(argv, context, callback) {
-//   return callback();
-// };
-
-// _.each(lib, (value, key) => {
-//   exports[key] = value;
-// });
+console.log(']');
+console.log('}');
 
 
+function kv(key, value, delim_) {
+  const delim = delim_ || '';
+
+  return `"${key}":"${value}${delim}"`;
+}
+
+function dquote(x) {
+  return `"${x}"`;
+}
