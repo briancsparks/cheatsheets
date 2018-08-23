@@ -149,12 +149,17 @@ _.each(ls(templates()), tDir => {
   }
 });
 
-// Load all the project templates
+// We are pre-processing. Look at all of the dirs immediately under the `projects` dir.
+// For each one, create a function.  This function will get called if the user chooses
+// a project type
 _.each(ls(projects()), pDir => {
+
+  // Skip non-directories
   if (!test('-d', projects(pDir)))    { return; }
 
   const srcDir    = directory(projects(pDir));
 
+  // Load all the project templates
   fns[pDir] = function(argv, it) {
     const dirname  = sg.argvGet(argv, 'dirname,file,f') || ARGV.args.shift();
     if (!dirname)  { return sg.die('Need --dirname= (the new sg-skeleton file will be ./dirname)'); }
@@ -260,6 +265,19 @@ function indent(str, num) {
 
 /**
  *  Makes a function that will make a directory name.
+ *
+ *  So you can make a variable that is descriptive of what you need, and is very easy
+ *  to use to create paths and other things that are relative to the dir. For example,
+ *
+ *  ````
+ *  const projectRootStr    = process.args[1]
+ *  const project           = directory(projectRootStr))
+ *  const gitdir            = directory(project('.git/'))
+ *  const public            = directory(project('public/'))
+ *  const source            = directory(project('src/'))
+ *  const actions           = directory(source('Actions/'))
+ *
+ *  ```
  */
 function directory(root_ /*, root2, ...*/) {
   var root;
