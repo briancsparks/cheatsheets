@@ -13,7 +13,7 @@ const deref                   = sg.deref;
 
 var lib = {};
 
-const main = function(callback) {
+const main = lib.main = function(callback) {
 
   var result = {};
   return sg.iwrap('fn', callback, abort, function(eabort) {
