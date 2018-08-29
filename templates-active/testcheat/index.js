@@ -21,9 +21,9 @@ exports.boot = async function(jetpackA, argv, utils) {
 
 phases.main = async function(jetpack, argv, phase, current, utils) {
 
-  const booyaJson   = await booya.render(argv);
+  const booyaJs     = await booya.render(argv);
   const booyaDest   = booya.dest(jetpack);
-  await booyaDest.commit(booyaJson);
+  await booyaDest.commit(booyaJs);
 
   const my_jsonJson = await my_json.render(argv);
   const my_jsonDest = my_json.dest(jetpack);
