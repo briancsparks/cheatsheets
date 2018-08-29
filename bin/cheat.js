@@ -6,7 +6,6 @@ var ARGV            = sg.ARGV();
 var sh              = sg.extlibs.shelljs;
 var path            = require('path');
 var fs              = require('fs');
-var cheat2          = require('./cheat2');
 
 sg.requireShellJsGlobal();
 
@@ -223,13 +222,17 @@ _.each(ls(snipsDir), snipName => {
   }
 });
 
-if (ARGV.v1) {
-  main();
-} else {
-  cheat2.main(function(err, result) {
+if (ARGV.glue_gun || ARGV.gg) {
+  const cheatGG = require('./cheat-glue-gun');
+  cheatGG.main(function(err, result) {
     // if (err)      { console.error(err); return process.exit(2); }
     // if (result)   { console.log(result); }
   });
+} else if (ARGV.v2) {
+  const cheat2 = require('./cheat2');
+  cheat2.main();
+} else {
+  main();
 }
 
 /**

@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/briancsparks/cheatsheets#readme",
   "dependencies": {
+    "fs-jetpack": "^2.1.0",
     "gluegun": "^2.0.0-beta.11",
-    "sgsg": "^0.9.51"
+    "quick-merge": "^1.0.1",
+    "sgsg": "^0.9.51",
+    "tempy": "^0.2.1"
   }
 }
