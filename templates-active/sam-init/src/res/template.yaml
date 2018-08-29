@@ -1,0 +1,18 @@
+
+
+Resources:
+  FooBarFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: lambda.api_handler
+      Runtime: nodejs8.10
+      Role:    arn:aws:iam::accountNum:role/project-name-executor
+      Events:
+        FooBar:
+          Type: Api
+          Properties:
+            Path: UrlPath
+            Method: httpMethod
+
+# TODO: add back VpcConfig, Environment

@@ -4,6 +4,7 @@ var sg              = require('sgsg');
 var _               = sg._;
 var ARGV            = sg.ARGV();
 var sh              = sg.extlibs.shelljs;
+var util            = require('util');
 var path            = require('path');
 var fs              = require('fs');
 
@@ -228,9 +229,20 @@ if (ARGV.glue_gun || ARGV.gg) {
     // if (err)      { console.error(err); return process.exit(2); }
     // if (result)   { console.log(result); }
   });
+
 } else if (ARGV.v2) {
   const cheat2 = require('./cheat2');
   cheat2.main();
+
+} else if (ARGV.vActive) {
+  const cheatActive = require('./cheat-active');
+  const activeMain = util.promisify(cheatActive.main);
+
+  activeMain(function(err, result) {
+    if (err)      { console.error(err); return process.exit(2); }
+    if (result)   { console.log(result); }
+  });
+
 } else {
   main();
 }

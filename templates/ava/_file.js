@@ -7,26 +7,7 @@ const _                       = sg._;
 
 const test                    = require('ava');
 
-// Unconditional:
-// t.pass('[message]');
-// t.fail('[message]');
-//
-// Assertions:
-// t.truthy(data, '[message]');
-// t.falsy(data, '[message]');
-// t.true(data, '[message]');
-// t.false(data, '[message]');
-// t.is(data, expected, '[message]');
-// t.not(data, expected, '[message]');
-// t.deepEqual(data, expected, '[message]');
-// t.notDeepEqual(data, expected, '[message]');
-// t.throws(function|promise, [error, '[message]']);
-// t.notThrows(function|promise, '[message]');
-// t.regex(data, regex, '[message]');
-// t.notRegex(data, regex, '[message]');
-// t.ifError(error, '[message]');         /* assert that error is falsy */
-//
-// t.skip.is(foo(), 5);
+
 
 // Normal node-cc async
 test.cb('bar', t => {
@@ -63,3 +44,24 @@ xtest(t => {
 
 function xtest(){}
 
+
+// Unconditional:
+// t.pass('[message]');
+// t.fail('[message]');
+//
+// Assertions:
+// t.truthy(data, '[message]');
+// t.falsy(data, '[message]');
+// t.true(data, '[message]');
+// t.false(data, '[message]');
+// t.is(data, expected, '[message]');
+// t.not(data, expected, '[message]');
+// t.deepEqual(data, expected, '[message]');
+// t.notDeepEqual(data, expected, '[message]');
+// t.throws(function|promise, [error, '[message]']);
+// t.notThrows(function|promise, '[message]');
+// t.regex(data, regex, '[message]');
+// t.notRegex(data, regex, '[message]');
+// t.ifError(error, '[message]');         /* assert that error is falsy */
+//
+// t.skip.is(foo(), 5);
