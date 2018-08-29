@@ -52,8 +52,12 @@ exports.main = async function() {
   const jpTemplate  = jpTemplates.cwd(it);
 
   var   argv        = _.omit(ARGV.getParams({skipArgs:true}), 'verbose', 'it');
+  argv = sg.reduce(argv, {}, (m, value, key) => {
+    return sg.kv(m, key, sg.smartValue(value));
+  });
 
-  const utils       = require('../lib/utils');
+  var   utils       = _.extend({}, require('../lib/utils'), require('../lib/jetpack-file'));
+
   const mod         = require(jpTemplate.cwd()) || {};
 
   var   root        = {};
