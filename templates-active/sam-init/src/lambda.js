@@ -1,5 +1,8 @@
 
-const ra                      = require('run-anywhere').v2;
+const sg                      = require('sgsg');
+const ra                      = (sg.include('run-anywhere') || require('run-anywhere')).v2;
+//const ra                      = sg.include('run-anywhere').v2;
+//const ra                      = require('run-anywhere').v2;
 const { qm }                  = require('quick-merge');
 const awsJson                 = require('aws-json');
 const {
