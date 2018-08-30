@@ -74,13 +74,13 @@ exports.json = async function(argv, config) {
         Value: {
           "Fn::GetAtt":             [awsFnName, 'Arn'],
         }
+      },
+      [awsApiName] : {
+        Description:                `API Gateway endpoint URL for Prod stage for ${fname} function`,
+        Value: {
+          "Fn::Sub":                `https://\${NetlabServerApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod${Path}/`
+        }
       }
-      // ,[awsApiName] : {
-      //   Description:                `API Gateway endpoint URL for Prod stage for ${fname} function`,
-      //   Value: {
-      //     "Fn::Sub":                `https://\${ApiGatewayRestApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod${Path}/`
-      //   }
-      // }
     }
   };
 

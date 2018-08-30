@@ -2,7 +2,7 @@
 swagger: "2.0"
 
 paths:
-  /lambda/{proxy+}:
+  /{proxy+}:
     x-amazon-apigateway-any-method:
       parameters:
       - name: "proxy"
