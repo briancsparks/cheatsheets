@@ -1,10 +1,23 @@
 
+const ra                      = require('run-anywhere').v2;
 const { qm }                  = require('quick-merge');
+const awsJson                 = require('aws-json');
+const {
+  apiResponse,
+  _200,
+  _500,
+}                             = awsJson;
 
-exports.api_handler = function(event, context, callback) {
+/**
+ *  Just handles the input parameters and handing them off to other functions to do
+ *  the real work. And handles formatting the result correctly.
+ *
+ *  Should not do any real processing outside parameter manipulation.
+ */
+exports.api_handler = ra.hook({runHost:'awsApiGateway',fname:'api_handler',wantEvent:true}, function(event, context, callback) {
 
   // Assume the worst
-  var   result = _500({ok:false});
+  var   result = _500({});
 
   try {
     result = _200({event});
@@ -15,27 +28,7 @@ exports.api_handler = function(event, context, callback) {
   }
 
   return callback(null, result);
-};
+});
 
 
-function mkResponse(code, json) {
-  var body = json;
-  if (typeof body !== 'string') {
-    body = JSON.stringify(body);
-  }
 
-  return {
-    statusCode: code,
-    body
-  };
-}
-
-function _200(json) { return mkResponse(200, qm(json, {ok:true})); }
-function _201(json) { return mkResponse(201, qm(json, {ok:true})); }
-function _301(json) { return mkResponse(301, qm(json, {ok:true})); }
-function _302(json) { return mkResponse(302, qm(json, {ok:true})); }
-function _400(json) { return mkResponse(400, qm(json, {ok:false})); }
-function _403(json) { return mkResponse(403, qm(json, {ok:false})); }
-function _404(json) { return mkResponse(404, qm(json, {ok:false})); }
-function _500(json) { return mkResponse(500, qm(json, {ok:false})); }
-function _503(json) { return mkResponse(503, qm(json, {ok:false})); }
