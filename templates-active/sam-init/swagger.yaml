@@ -1,0 +1,17 @@
+
+swagger: "2.0"
+
+paths:
+  /lambda/{proxy+}:
+    x-amazon-apigateway-any-method:
+      parameters:
+      - name: "proxy"
+        in:   "path"
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:084075158741:function:IngestFunction/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+
+

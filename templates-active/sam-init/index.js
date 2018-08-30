@@ -6,6 +6,7 @@ var configFile;
 var tDir;
 // var samYamlFile;
 var samJsonFile;
+var swaggerYamlFile;
 var packageJsonFile;
 var lambdaJsFile;
 
@@ -17,6 +18,7 @@ exports.boot = async function(jetpackA, argv, utils) {
 
   // samYamlFile     = new JetpackFile(tDir, 'sam.yaml');
   samJsonFile     = new JetpackFile(tDir, 'sam.json.js');
+  swaggerYamlFile = new JetpackFile(tDir, 'swagger.yaml');
   lambdaJsFile    = new JetpackFile(tDir, 'src/lambda.js');
   packageJsonFile = new JetpackFile(tDir, 'src/package.json.js');
 
@@ -34,12 +36,14 @@ phases.main = async function(jetpack, argv, phase, current, utils, config) {
   const { inspect } = utils;
 
   const samJson     = await samJsonFile.render(argv, config);
+  const swaggerYaml = await swaggerYamlFile.render(argv, config);
   const packageJson = await packageJsonFile.render(argv, config);
 
   // const samYamlJson = await samYamlFile.render(argv);
   const lambdaJs    = await lambdaJsFile.render(argv);
 
   await samJsonFile.dest(jetpack).commit(samJson);
+  await swaggerYamlFile.dest(jetpack).commit(swaggerYaml);
   await packageJsonFile.dest(jetpack).commit(packageJson);
   // await samYamlFile.dest(jetpack).commit(samYamlJson);
   await lambdaJsFile.dest(jetpack).commit(lambdaJs);

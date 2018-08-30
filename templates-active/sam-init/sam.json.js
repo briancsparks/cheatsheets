@@ -11,15 +11,16 @@ const {
 exports.json = async function(argv, config) {
   // console.log(require('util').inspect({argv, config}, {depth:null,colors:true}));
 
-  const projectName = argv.project || argv.project_name || (config.project && config.project.name) || nag('hello_world');
-  const fname       = argv.fname || nag('hello_world');
-  const awsFnName   = `${C(fname)}Function`;
-  const awsApiName  = `${C(fname)}Api`;
-  const Path        = argv.path   || `/${cC(fname)}`;
+  const projectName         = argv.project || argv.project_name || (config.project && config.project.name) || nag('hello_world');
+  const fname               = argv.fname || nag('hello_world');
+  const Path                = argv.path   || `/${cC(fname)}`;
+  const awsApiProjectName   = `${C(projectName)}Api`;
+  const awsFnName           = `${C(fname)}Function`;
+  const awsApiName          = `${C(fname)}Api`;
 
-  const acct        = config.acct;
-  const role        = toDashCase(argv.role   || `${projectName}-executor`);
-  const fnRoleArn   = argv.arn    || (acct && role && `arn:aws:iam::${acct}:role/${role}`);
+  const acct                = config.acct;
+  const role                = toDashCase(argv.role   || `${projectName}-executor`);
+  const fnRoleArn           = argv.arn    || (acct && role && `arn:aws:iam::${acct}:role/${role}`);
 
 
   var result = {
@@ -37,6 +38,14 @@ exports.json = async function(argv, config) {
     },
 
     Resources: {
+      [awsApiProjectName] : {
+        Type:                       'AWS::Serverless::Api',
+        Properties: {
+          DefinitionUri:            argv.doc_dir || argv.definition_uri || './swagger.yaml',
+          StageName:                argv.stage   || nag('dev'),
+        }
+      },
+
       [awsFnName]: {
         Type:                       'AWS::Serverless::Function',
         Properties: {
@@ -48,7 +57,10 @@ exports.json = async function(argv, config) {
               Type: 'Api',
               Properties: {
                 Path,
-                Method:             argv.method || argv.verb || 'get'
+                Method:             argv.method || argv.verb || 'get',
+                RestApiId: {
+                  "Ref":            awsApiProjectName,
+                }
               }
             }
           }
@@ -62,13 +74,13 @@ exports.json = async function(argv, config) {
         Value: {
           "Fn::GetAtt":             [awsFnName, 'Arn'],
         }
-      },
-      [awsApiName] : {
-        Description:                `API Gateway endpoint URL for Prod stage for ${fname} function`,
-        Value: {
-          "Fn::Sub":                `https://\${ServerlessRestApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod${Path}/`
-        }
       }
+      // ,[awsApiName] : {
+      //   Description:                `API Gateway endpoint URL for Prod stage for ${fname} function`,
+      //   Value: {
+      //     "Fn::Sub":                `https://\${ApiGatewayRestApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod${Path}/`
+      //   }
+      // }
     }
   };
 
