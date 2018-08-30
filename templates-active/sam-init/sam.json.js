@@ -9,7 +9,7 @@ const {
 }                             = sg;
 
 exports.json = async function(argv, config) {
-  console.log(require('util').inspect({argv, config}, {depth:null,colors:true}));
+  // console.log(require('util').inspect({argv, config}, {depth:null,colors:true}));
 
   const projectName = argv.project || argv.project_name || (config.project && config.project.name) || nag('hello_world');
   const fname       = argv.fname || nag('hello_world');
