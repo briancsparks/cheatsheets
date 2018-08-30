@@ -1,8 +1,12 @@
 
 const { qm }                  = require('quick-merge');
 
+var configFileName;
+var configFile;
 var tDir;
-var samYamlFile;
+// var samYamlFile;
+var samJsonFile;
+var packageJsonFile;
 var lambdaJsFile;
 
 var phases = {};
@@ -11,21 +15,33 @@ exports.boot = async function(jetpackA, argv, utils) {
   const { JetpackFile } = utils;
   tDir    = jetpackA.cwd(__dirname);
 
-  samYamlFile   = new JetpackFile(tDir, 'sam.yaml');
-  lambdaJsFile  = new JetpackFile(tDir, 'src/lambda.js');
+  // samYamlFile     = new JetpackFile(tDir, 'sam.yaml');
+  samJsonFile     = new JetpackFile(tDir, 'sam.json.js');
+  lambdaJsFile    = new JetpackFile(tDir, 'src/lambda.js');
+  packageJsonFile = new JetpackFile(tDir, 'src/package.json.js');
 
-  return {
-    dest: jetpackA.cwd()
-  };
+  const dest      = jetpackA.cwd();
+
+  const stage     = argv.stage || 'dev';
+
+  configFileName  = argv.config || `${stage}.yaml` || 'config.json';
+  configFile      = new JetpackFile(jetpackA, configFileName);
+
+  return { dest };
 }
 
-phases.main = async function(jetpack, argv, phase, current, utils) {
+phases.main = async function(jetpack, argv, phase, current, utils, config) {
   const { inspect } = utils;
 
-  const samJson     = await samYamlFile.render(argv);
+  const samJson     = await samJsonFile.render(argv, config);
+  const packageJson = await packageJsonFile.render(argv, config);
+
+  // const samYamlJson = await samYamlFile.render(argv);
   const lambdaJs    = await lambdaJsFile.render(argv);
 
-  await samYamlFile.dest(jetpack).commit(samJson);
+  await samJsonFile.dest(jetpack).commit(samJson);
+  await packageJsonFile.dest(jetpack).commit(packageJson);
+  // await samYamlFile.dest(jetpack).commit(samYamlJson);
   await lambdaJsFile.dest(jetpack).commit(lambdaJs);
 
   return qm(phase, {
@@ -33,10 +49,24 @@ phases.main = async function(jetpack, argv, phase, current, utils) {
   });
 };
 
-exports.main = async function(jetpack, argv, phase, current, utils) {
-  // TODO: read/build a config object from env, setting file in project
-  //       most argv params can be remembered, or fetched, or whatever
+exports.main = async function(jetpack, argv_, phase, current, utils) {
+
+  const stage       = argv_.stage || 'dev';
+  const STAGE       = stage.toUpperCase();
+
+  var   config      = await configFile.render();
+
+  config = qm(config, {
+    acct: process.env[`AWS_${STAGE}_ACCOUNT`],
+  });
+
+  const argv = qm(argv_, {
+    stage, STAGE,
+  });
+
+  // console.log(`config: ${configFileName}`, {config});
+
   const handler = utils.getPhaseHandler(phases, phase);
-  return await handler(jetpack, argv, phase, current, utils);
+  return await handler(jetpack, argv, phase, current, utils, config);
 };
 

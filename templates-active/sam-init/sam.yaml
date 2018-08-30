@@ -1,15 +1,15 @@
 
 
 Resources:
-  FooBarFunction:
+  The:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
       Handler: lambda.api_handler
       Runtime: nodejs8.10
-      Role:    arn:aws:iam::accountNum:role/project-name-executor
+      Role:    arn:aws:iam::12345678:role/project-name-executor
       Events:
-        FooBar:
+        The:
           Type: Api
           Properties:
             Path: UrlPath

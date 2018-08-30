@@ -42,13 +42,6 @@ exports.main = async function() {
     return showUsage();
   }
 
-  const userFullname = ARGV.name || ARGV.args.shift();
-
-  var   userParts       = userFullname.split(pathLib.sep);
-  const userName        = userParts.pop();
-  const itPath          = pathLib.join(...userParts);
-  const [itName, itExt] = userName.split('.');
-
   const jpTemplate  = jpTemplates.cwd(it);
 
   var   argv        = _.omit(ARGV.getParams({skipArgs:true}), 'verbose', 'it');
