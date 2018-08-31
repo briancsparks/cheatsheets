@@ -22,6 +22,7 @@
   "homepage": "https://github.com/briancsparks/cheatsheets#readme",
   "dependencies": {
     "aws-json": "0.0.3",
+    "chalk": "^2.4.1",
     "fs-jetpack": "^2.1.0",
     "gluegun": "^2.0.0-beta.11",
     "js-yaml": "^3.12.0",

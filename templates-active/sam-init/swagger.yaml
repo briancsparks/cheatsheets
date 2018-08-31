@@ -4,7 +4,7 @@
 swagger: "2.0"
 info:
   version:  "2018-08-30T19:07:07.123Z"
-  title:    ProjectName
+  title:    "project_name"
 
 host:       ApiFqdn
 
