@@ -29,5 +29,9 @@
     "quick-merge": "^1.0.1",
     "sgsg": "^0.9.51",
     "tempy": "^0.2.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8"
   }
 }

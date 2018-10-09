@@ -1,5 +1,4 @@
 
-// From: http://blog.ryangreen.ca/2016/09/26/bare-bones-swagger-example-for-api-gateway-simplified-proxy-features/
 
 swagger: "2.0"
 info:

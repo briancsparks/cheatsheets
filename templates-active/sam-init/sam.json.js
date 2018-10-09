@@ -27,10 +27,24 @@ exports.json = async function(argv, config) {
   const awsFnName           = `${C(fname)}Function`;
   const awsApiName          = `${C(fname)}Api`;
 
+  // S3`
+  const s3fname             = argv.s3fname || nag('foo_bar');
+  const awsS3FnName         = `${C(s3fname)}Function`;
+
   // Get the functions Arn, if enough info is provided
   const acct                = config.acct;
   const role                = toDashCase(argv.role   || `${projectName}-executor`);
   const fnRoleArn           = argv.arn    || (acct && role && `arn:aws:iam::${acct}:role/${role}`);
+
+  // DynamoDB
+  const awsDynamoDbTable    = `${C(projectName)}Table`;
+
+  // SNS
+  const awsSNSTopic         = `${C(projectName)}Topic`;
+  const emailAddress        = argv.email || configuration.email || nag('YoshiTMunchaskoopas@hp.com');
+
+  // SQS
+  const awsSQSQueue         = `${C(projectName)}Queue`;
 
 
   // Here is te object that gets turned into the cf-template
@@ -38,7 +52,7 @@ exports.json = async function(argv, config) {
 
     // Normal boilerplate for the template engine
     AWSTemplateFormatVersion:       '2010-09-09',
-    Transform:                       'AWS::Serverless-2016-10-31',
+    Transform:                      'AWS::Serverless-2016-10-31',
 
     // Globals are used by all functions
     Globals: {
@@ -56,6 +70,7 @@ exports.json = async function(argv, config) {
     // The AWS resources we are going to use
     Resources: {
 
+      // -----------------------------------------------------------------------------------------------------//
       // An Api Gateway (the swagger template is simple and just forwards all requests to our fn
       [awsApiProjectName] : {
         Type:                       'AWS::Serverless::Api',
@@ -65,6 +80,7 @@ exports.json = async function(argv, config) {
         }
       },
 
+      // -----------------------------------------------------------------------------------------------------//
       // The Lambda function that handles the Api Gateway requests
       [awsFnName]: {
         Type:                       'AWS::Serverless::Function',
@@ -76,7 +92,8 @@ exports.json = async function(argv, config) {
           // The IAM Role that the function will operate with (this line will 'fizzle' if fnRoleArn is undefined.
           Role:                     fnRoleArn,
 
-          // This is what ties the Lambda function to the Api Gateway
+          // -----------------------------------------------------------------------------------------------------//
+          // This is what ties the Lambda function to the Api GatewayG
           Events: {
             [awsApiName] : {
               Type: 'Api',
@@ -89,9 +106,64 @@ exports.json = async function(argv, config) {
               }
             }
           }
-
         }
-      }
+      },
+
+      NetlabS3FileStorage: {
+        Type:                       'AWS::S3::Bucket',
+      },
+
+      // -----------------------------------------------------------------------------------------------------//
+      // The Lambda function to process s3 objects
+      [awsS3FnName]: {
+        Type:                       'AWS::Serverless::Function',
+        Properties: {
+
+          // The Lambda handler function is in the file 'src/lambda.js'
+          Handler:                  'lambda.s3_object_created',
+
+          // The IAM Role that the function will operate with (this line will 'fizzle' if fnRoleArn is undefined.
+          Role:                     fnRoleArn,
+
+          Events: {
+            NormalizeInputsEvent: {
+              Type:                 'S3',
+              Properties: {
+                Bucket:             { Ref: 'NetlabS3FileStorage' },
+                Events:             's3:ObjectCreated:*'
+              }
+            }
+          }
+        }
+      },
+
+      // -----------------------------------------------------------------------------------------------------//
+      // An SNS Topic
+      [awsSNSTopic]: {
+        Type:                       'AWS::SNS::Topic',
+        Properties: {
+          Subscription: [{
+            Endpoint:               emailAddress,
+            Protocol:               'email',
+          }]
+        }
+      },
+
+      // -----------------------------------------------------------------------------------------------------//
+      // An SQS Queue
+      [awsSQSQueue]: {
+        Type:                       'AWS::SQS::Queue',
+        Properties: {
+          VisibilityTimeout:        45,
+        }
+      },
+
+      // [awsDynamoDbTable]: {
+      //   Type:                       'AWS::DynamoDB::Table',
+      //   Properties: {
+      //   }
+      // }
+
     },
 
     // Publish my objects in the Output
@@ -130,3 +202,42 @@ function C(x) {
 function cC(x) {
   return toCamelCase(x);
 }
+
+const dynamodb= {
+    "Resources": {
+        "DDBT1GR9": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "ClientId",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "Username",
+                        "KeyType": "HASH"
+                    }
+                ]
+            }
+        }
+    }
+};
+
+var cloudwatchevents={
+    "Resources": {
+        "ER13R9T": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+                "ScheduleExpression" : "rate(1 minute)"
+            }
+        }
+    }
+};
+
+
