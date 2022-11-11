@@ -1,6 +1,6 @@
 {
   "name": "cheatsheets",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "A collection of snippets for various things.",
   "main": "index.js",
   "bin": {
@@ -23,7 +23,7 @@
   "dependencies": {
     "aws-json": "0.0.3",
     "fs-jetpack": "^2.1.0",
-    "gluegun": "^2.0.0-beta.11",
+    "gluegun": "^5.1.2",
     "js-yaml": "^3.12.0",
     "quick-merge": "^1.0.1",
     "sgsg": "^0.9.51",
